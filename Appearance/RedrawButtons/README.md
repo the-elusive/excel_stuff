@@ -1,4 +1,4 @@
-## I wrote this procedure to keep my button edges tidy
+## I wrote this procedure to keep my button edges tidy ☺
 ### Before
 ### After
 
