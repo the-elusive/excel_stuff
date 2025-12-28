@@ -5,6 +5,10 @@
 ![ButtonsAfter.png](images/ButtonsAfter.png)
 ### Instructions: Download the bas file, import to your spreadsheet, edit myArray, run the macro
 ![ButtonsEditThis.png](images/ButtonsEditThis.png)
+### Image above with the colours inverted
+![ButtonsEditThisInverted.png](images/ButtonsEditThisInverted.png)
+### Note to self
+![InvertColourReminder.png](images/InvertColourReminder.png)
 
 <br/>
 <br/>
