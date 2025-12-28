@@ -1,5 +1,6 @@
 ## I wrote this procedure to keep my button edges tidy ☺
 ### Before
+![ButtonsBefore.png](/images/ButtonsBefore.png)
 ### After
 
 <br/><br/>What follows is for my benefit until I get the hang of editing README.md files:
