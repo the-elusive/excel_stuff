@@ -1,6 +1,6 @@
-# I wrote this procedure to keep my button edges tidy
-## Before
-## After
+## I wrote this procedure to keep my button edges tidy
+### Before
+### After
 
 <br/><br/>What follows is for my benefit until I get the hang of editing README.md files:
 # A first-level heading
