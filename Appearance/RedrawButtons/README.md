@@ -1,3 +1,7 @@
+# A first-level heading
+## A second-level heading
+### A third-level heading
+
 # GitHub docs:
 
 - [About README.md files](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes)<br/>
