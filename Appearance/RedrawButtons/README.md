@@ -1,9 +1,14 @@
-## I wrote this procedure to keep my button edges tidy ☺
+## I wrote this VBA procedure to keep my button edges tidy ☺
 ### Before
 ![ButtonsBefore.png](images/ButtonsBefore.png)
 ### After
+![ButtonsAfter.png](images/ButtonsAfter.png)
+### Instructions: Download the bas file, import to your spreadsheet, edit myArray, run the macro
+![ButtonsEditThis.png](images/ButtonsEditThis.png)
 
-<br/><br/>What follows is for my benefit until I get the hang of editing README.md files:
+<br/>
+<br/>
+What follows is for my benefit until I get the hang of editing README.md files:
 # A first-level heading
 ## A second-level heading
 ### A third-level heading
