@@ -2,7 +2,7 @@
 ## Before
 ## After
 
-What follows is for my benefit until I get the hang of editing README.md files:
+<br/><br/>What follows is for my benefit until I get the hang of editing README.md files:
 # A first-level heading
 ## A second-level heading
 ### A third-level heading
