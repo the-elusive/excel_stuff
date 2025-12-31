@@ -9,9 +9,9 @@
 ![ButtonsEditThisInverted.png](images/ButtonsEditThisInverted.png)
 ### Note to self
 ![InvertColourReminder.png](images/InvertColourReminder.png)
+<br/>
+<br/>
 
-<br/>
-<br/>
 What follows is for my benefit until I get the hang of editing README.md files:
 # A first-level heading
 ## A second-level heading
