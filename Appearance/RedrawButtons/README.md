@@ -12,6 +12,7 @@
 <br/>
 <br/>
 
+<!-- In Markdown, headings need to be preceded by a blank line (or be at the start of the document) to be properly rendered -->
 What follows is for my benefit until I get the hang of editing README.md files:
 # A first-level heading
 ## A second-level heading
