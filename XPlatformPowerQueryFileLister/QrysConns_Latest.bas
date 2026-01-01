@@ -1,4 +1,6 @@
 Attribute VB_Name = "QrysConns_Latest"
+' Check out the following at some point:
+' https://community.fabric.microsoft.com/t5/Power-Query/Querytable-refresh-vs-ListObject-Refresh/td-p/2890348
 ' Sub QrysConns_ListQrysBasic()
 ' Sub QrysConns_ListConnsDetailed()
 ' Sub QrysConns_BackgroundRefreshFalseAll()
@@ -414,4 +416,5 @@ TheEnd:
     End If
 
 End Sub ' QrysConns_ExportQrysMac
+
 
