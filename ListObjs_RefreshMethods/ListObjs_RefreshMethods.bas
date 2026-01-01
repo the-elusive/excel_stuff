@@ -33,8 +33,6 @@ Sub ListObjs_RefreshFirstMethod1()
     
     End If
 
-    
-    
     Debug.Print msg
     
     Debug.Print "--- ListObjs_RefreshFirstMethod1 ENDS ---" & vbCr
