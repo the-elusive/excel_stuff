@@ -21,10 +21,6 @@ Private Sub Workbook_Open()
                     
                         Sheets("Home").Buttons(b).OnAction = "OpenContainingFolderMac"
 
-                    Case "Write queries to text file"
-                    
-                        Sheets("Home").Buttons(b).OnAction = "QrysConns_ExportQrysMac" ' X-platform
-                    
                     Case Else
                 
                         ' Do nothing
@@ -72,4 +68,5 @@ Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
     Range("ClearThis").ClearContents
 
 End Sub
+
 
