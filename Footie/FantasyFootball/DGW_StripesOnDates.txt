@@ -6,7 +6,9 @@
   rgb(242, 206, 239) → Light purple (formulas)
   rgb(72, 61, 139) → Navy blue (background)
 
-kickoff_time looks like this: 2025-12-28T16:30:00Z
+kickoff_time looks like this: 
+2025-12-28T16:30:00Z
+12345678901234567890
 
 =IF(
   OFFSET([@[kickoff_time]],-1,0) = "kickoff_time",
@@ -36,4 +38,5 @@ kickoff_time looks like this: 2025-12-28T16:30:00Z
       )
     )
   )
+
 )
