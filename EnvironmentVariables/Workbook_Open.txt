@@ -1,0 +1,75 @@
+Private Sub Workbook_Open()
+ 
+    Range("Refreshed") = Format(Now, "ddd dd-mmm-yyyy hh:mm:ss")
+    Range("Version") = Application.Version
+    Range("Build") = Application.Build
+    Range("OS") = Environ("OS")
+    Range("Username") = Environ("USERNAME")
+    Range("User") = Environ("USER")
+    
+    ' --- Buttons: Home tab STARTS ---
+    
+    For b = 1 To Sheets("Home").Buttons.Count
+    
+        Select Case Left(Application.OperatingSystem, 3)
+    
+            Case "Mac"
+            
+                Select Case Sheets("Home").Buttons(b).Caption
+                
+                    Case "Open containing folder"
+                    
+                        Sheets("Home").Buttons(b).OnAction = "OpenContainingFolderMac"
+
+                    Case "Write queries to text file"
+                    
+                        Sheets("Home").Buttons(b).OnAction = "QrysConns_ExportQrysMac" ' X-platform
+                    
+                    Case Else
+                
+                        ' Do nothing
+                
+                End Select
+            
+            Case "Win"
+            
+                Select Case Sheets("Home").Buttons(b).Caption
+                
+                    Case "Open containing folder"
+                    
+                        Sheets("Home").Buttons(b).OnAction = "DoOpenContainingFolder"
+                    
+                    Case Else
+                
+                        ' Do nothing
+                
+                End Select
+            
+            Case Else ' Not Windows or Mac
+            
+                Select Case Sheets("Home").Buttons(b).Caption
+                
+                    Case "Open containing folder"
+                    
+                        Sheets("Home").Buttons(b).OnAction = "DummyMacro"
+                    
+                    Case Else
+                
+                        ' Do nothing
+        
+                End Select
+        
+        End Select
+    
+    Next
+    
+    ' --- Buttons: Home tab ENDS ---
+    
+End Sub ' Workbook_Open
+
+Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
+    
+    Range("ClearThis").ClearContents
+
+End Sub
+
