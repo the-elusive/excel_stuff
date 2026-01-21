@@ -9,6 +9,8 @@
 kickoff_time looks like this: 
 2025-12-28T16:30:00Z
 12345678901234567890
+∴ MID([@[kickoff_time]], 1, 7) is the year & the month ie 2025-12
+& MID([@[kickoff_time]], 1, 10) is the date ie 2025-12-28
 
 =IF(
   OFFSET([@[kickoff_time]],-1,0) = "kickoff_time",
@@ -40,3 +42,4 @@ kickoff_time looks like this:
   )
 
 )
+
