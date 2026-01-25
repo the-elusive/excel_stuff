@@ -1,1 +1,1 @@
-# Testing, testing, 123
+Welcome to my GitHub! I held off setting up a GitHub account for ages 'cos it struck me as a bit intimidating but now I come to use it I find that's not true. Turns out Linus Torvalds really knew what he was doing! My speciality is Excel automation but I also dabble in Python. My Python work is mainly concerned with the processing of pdfs. I invite you to check back here often :0)
