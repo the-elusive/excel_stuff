@@ -9,7 +9,7 @@ Tues 03 Feb 2026: I uploaded the file PivotTablesVBA_01.bas which contains the p
 &nbsp;&nbsp;![PTs_CacheRecycle.png](images/PTs_CacheRecycle.png)
 
 &nbsp;&nbsp;PTs_CountEachTab</br>
-&nbsp;![PTs_CountEachTab.png](images/PTs_CountEachTab.png)
+&nbsp;&nbsp;![PTs_CountEachTab.png](images/PTs_CountEachTab.png)
 
 Also:
 
