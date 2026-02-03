@@ -1,4 +1,4 @@
-It's likely I'll be adding quite a lot of stuff to "PivotTables".
+### It's likely I'll be adding quite a lot of stuff to "PivotTables".
 
 Tues 03 Feb 2026: I uploaded the file PivotTablesVBA_01.bas which contains the procedures:
 
@@ -13,4 +13,4 @@ Tues 03 Feb 2026: I uploaded the file PivotTablesVBA_01.bas which contains the p
 
 Also:
 
-&nbsp;&nbsp;PTs_SelectPTIncFilters & PTs_SelectPTExcFilters which do exactly what you would expect.
+&nbsp;&nbsp;**PTs_SelectPTIncFilters** & **PTs_SelectPTExcFilters** which do exactly what you would expect.
