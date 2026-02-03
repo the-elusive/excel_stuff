@@ -2,7 +2,7 @@ It's likely I'll be adding quite a lot of stuff to "PivotTables".
 
 Tues 03 Feb 2026: I uploaded the file PivotTablesVBA_01.bas which contains the procedures:
 
-  PTs__CachesCountActiveWB</br>
+&nbsp;PTs__CachesCountActiveWB</br>
   ![PTs__CachesCountActiveWB.png](images/PTs__CachesCountActiveWB.png)
 
   PTs_CacheRecycle</br>
