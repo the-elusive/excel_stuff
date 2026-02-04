@@ -763,11 +763,54 @@ End Sub ' ConditionalFormatsReport
 
 Function WhichCols(MyRange As Range) As String
     
-    WhichCols = MyRange.Value ' eg $A$1:$A$1000, $B$1:$E$1000
+    Dim Debugs, NotInOutputThisYet As Boolean ' These default to False ie Zero
+    
+    ' Uncomment the following to enable
+    ' Debugs = True
+    
+    If Debugs Then
+    
+        Debug.Print "***** Function WhichCols STARTS *****"
+    
+    End If
+    
+    ' --- Separator ---
+    
+    WhichCols = MyRange.Value ' eg A1:A1000, B1:E1000 NB No dollar signs
 
-    OutputThis = ""
+    If Debugs Then
+    
+        Debug.Print "WhichCols: " & Chr(34) & WhichCols & Chr(34) & "."
+    
+    End If
+
+    ' --- Separator ---
+    
+    Dim OutputThis As String ' Defaults to ""
+    
+    ' --- Separator ---
+    
+    Dim i, j As Long
+    
+    ' --- Separator ---
+    
+    If Debugs Then
+    
+        Debug.Print "OutputThis was initialised to a zero-length string."
+    
+    End If
+    
+    ' --- Separator ---
     
     RemoveTheseChars = " 0123456789$"
+    
+    If Debugs Then
+    
+        Debug.Print "Assigned string " & Chr(34) & RemoveTheseChars & Chr(34) & " to variable RemoveTheseChars."
+    
+    End If
+    
+    ' --- Separator ---
     
     For i = 1 To Len(RemoveTheseChars)
     
@@ -775,33 +818,171 @@ Function WhichCols(MyRange As Range) As String
     
     Next i
     
+    If Debugs Then
+    
+        Debug.Print "Replacements were made. WhichCols is now: " & Chr(34) & WhichCols & Chr(34) & "."
+    
+    End If
+    
+    ' --- Separator ---
+    
     ' You'll end up with something like A:A,B:E
     
     For i = LBound(Split(WhichCols, ",")) To UBound(Split(WhichCols, ","))
 
+        If Debugs Then
+        
+            Debug.Print "--- Split(WhichCols, " & Chr(34) & "," & Chr(34) & ")(" & CStr(i) & "): " & Chr(34) & Split(WhichCols, ",")(i) & Chr(34) & " ---"
+        
+        End If
+        
         If InStr(Split(WhichCols, ",")(i), ":") > 0 Then
         
+            If Debugs Then
+            
+                Debug.Print "i: " & CStr(i) & ". Found colon in: " & Chr(34) & Split(WhichCols, ",")(i) & Chr(34) & "."
+            
+            End If
+            
             If Split(Split(WhichCols, ",")(i), ":")(0) = Split(Split(WhichCols, ",")(i), ":")(1) Then
             
+                If Debugs Then
+                
+                    Debug.Print "i: " & CStr(i) & ". Item to the left of the colon is the same as to the right."
+                
+                End If
+                
                 If OutputThis = "" Then
                 
+                    If Debugs Then
+                    
+                        Debug.Print "i: " & CStr(i) & ". OutputThis pre-assignment: " & Chr(34) & OutputThis & Chr(34) & "."
+                    
+                    End If
+                    
                     OutputThis = Split(Split(WhichCols, ",")(i), ":")(0)
                 
-                Else
+                    If Debugs Then
+                    
+                        Debug.Print "i: " & CStr(i) & ". OutputThis post-assignment: " & Chr(34) & OutputThis & Chr(34) & "."
+                    
+                    End If
                 
-                    OutputThis = OutputThis & ", " & Split(Split(WhichCols, ",")(i), ":")(0)
+                Else ' OutputThis <> ""
+                
+                    NotInOutputThisYet = True
+                    
+                    For j = LBound(Split(OutputThis, ", ")) To UBound(Split(OutputThis, ", "))
+                        
+                        ' Split(Split(WhichCols, ",")(i), ":")(0) is Split(WhichCols, ",")(i) elsewhere
+                        
+                        If Split(Split(WhichCols, ",")(i), ":")(0) = Split(OutputThis, ", ")(j) Then
+                            
+                            If Debugs Then
+                            
+                                Debug.Print _
+                                "i=" & CStr(i) & ". " & _
+                                "j=" & CStr(j) & ". " & _
+                                Chr(34) & Split(WhichCols, ",")(i) & Chr(34) & " = " & Chr(34) & Split(OutputThis, ", ")(j) & Chr(34) & ". " & _
+                                "NotInOutputThisYet set to False, for loop exited & OutputThis will not be added to."
+                            
+                            End If
+                        
+                            NotInOutputThisYet = False
+                            
+                            Exit For
+                        
+                        End If
+                    
+                    Next j
+                    
+                    If NotInOutputThisYet Then
+                    
+                        If Debugs Then
+                        
+                            Debug.Print "i: " & CStr(i) & ". OutputThis pre-assignment: " & Chr(34) & OutputThis & Chr(34) & "."
+                        
+                        End If
+                        
+                        OutputThis = OutputThis & ", " & Split(Split(WhichCols, ",")(i), ":")(0)
+                    
+                        If Debugs Then
+                        
+                            Debug.Print "i: " & CStr(i) & ". OutputThis post-assignment: " & Chr(34) & OutputThis & Chr(34) & "."
+                        
+                        End If
+                    
+                    End If ' NotInOutputThisYet
                 
                 End If
             
             Else ' Split(Split(WhichCols, ",")(i), ":")(0) <> Split(Split(WhichCols, ",")(i), ":")(1)
             
+                If Debugs Then
+                
+                    Debug.Print "i: " & CStr(i) & ". Item to the left of the colon is NOT the same as to the right."
+                
+                End If
+                
                 If OutputThis = "" Then
                 
+                    If Debugs Then
+                    
+                        Debug.Print "i: " & CStr(i) & ". OutputThis pre-assignment: " & Chr(34) & OutputThis & Chr(34) & "."
+                    
+                    End If
+                    
                     OutputThis = Split(WhichCols, ",")(i)
                 
-                Else
+                    If Debugs Then
+                    
+                        Debug.Print "i: " & CStr(i) & ". OutputThis post-assignment: " & Chr(34) & OutputThis & Chr(34) & "."
+                    
+                    End If
                 
-                    OutputThis = OutputThis & ", " & Split(WhichCols, ",")(i)
+                Else ' OutputThis <> ""
+                
+                    NotInOutputThisYet = True
+                    
+                    For j = LBound(Split(OutputThis, ", ")) To UBound(Split(OutputThis, ", "))
+                    
+                        If Split(WhichCols, ",")(i) = Split(OutputThis, ", ")(j) Then
+                            
+                            If Debugs Then
+                            
+                                Debug.Print _
+                                "i=" & CStr(i) & ". " & _
+                                "j=" & CStr(j) & ". " & _
+                                Chr(34) & Split(WhichCols, ",")(i) & Chr(34) & " = " & Chr(34) & Split(OutputThis, ", ")(j) & Chr(34) & ". " & _
+                                "NotInOutputThisYet set to False, for loop exited & OutputThis will not be added to."
+                            
+                            End If
+                        
+                            NotInOutputThisYet = False
+                            
+                            Exit For
+                        
+                        End If
+                    
+                    Next j
+                    
+                    If NotInOutputThisYet Then
+                    
+                        If Debugs Then
+                        
+                            Debug.Print "i: " & CStr(i) & ". OutputThis pre-assignment: " & Chr(34) & OutputThis & Chr(34) & "."
+                        
+                        End If
+                        
+                        OutputThis = OutputThis & ", " & Split(WhichCols, ",")(i)
+                    
+                        If Debugs Then
+                        
+                            Debug.Print "i: " & CStr(i) & ". OutputThis post-assignment: " & Chr(34) & OutputThis & Chr(34) & "."
+                        
+                        End If
+                    
+                    End If ' NotInOutputThisYet
                 
                 End If
             
@@ -809,13 +990,71 @@ Function WhichCols(MyRange As Range) As String
         
         Else ' No colon
         
-            If OutputThis = "" Then
+            If Debugs Then
             
+                Debug.Print "i: " & CStr(i) & ". No colon in: " & Chr(34) & Split(WhichCols, ",")(i) & Chr(34) & "."
+            
+            End If
+            
+            If OutputThis = "" Then
+                
+                If Debugs Then
+                
+                    Debug.Print "i: " & CStr(i) & ". OutputThis pre-assignment: " & Chr(34) & OutputThis & Chr(34) & "."
+                
+                End If
+                
                 OutputThis = Split(WhichCols, ",")(i)
             
-            Else
+                If Debugs Then
+                
+                    Debug.Print "i: " & CStr(i) & ". OutputThis post-assignment: " & Chr(34) & OutputThis & Chr(34) & "."
+                
+                End If
             
-                OutputThis = OutputThis & Split(WhichCols, ",")(i)
+            Else ' OutputThis <> ""
+            
+                NotInOutputThisYet = True
+                
+                For j = LBound(Split(OutputThis, ", ")) To UBound(Split(OutputThis, ", "))
+                
+                    If Split(WhichCols, ",")(i) = Split(OutputThis, ", ")(j) Then
+                        
+                        If Debugs Then
+                        
+                            Debug.Print _
+                            "i=" & CStr(i) & ". " & _
+                            "j=" & CStr(j) & ". " & _
+                            Chr(34) & Split(WhichCols, ",")(i) & Chr(34) & " = " & Chr(34) & Split(OutputThis, ", ")(j) & Chr(34) & ". " & _
+                            "NotInOutputThisYet set to False, for loop exited & OutputThis will not be added to."
+                        
+                        End If
+                    
+                        NotInOutputThisYet = False
+                        
+                        Exit For
+                    
+                    End If
+                
+                Next j
+                
+                If NotInOutputThisYet Then
+                
+                    If Debugs Then
+                    
+                        Debug.Print "i: " & CStr(i) & ". OutputThis pre-assignment: " & Chr(34) & OutputThis & Chr(34) & "."
+                    
+                    End If
+                    
+                    OutputThis = OutputThis & ", " & Split(WhichCols, ",")(i) ' Wed 04 Feb 2026: Added ", "
+                
+                    If Debugs Then
+                    
+                        Debug.Print "i: " & CStr(i) & ". OutputThis post-assignment: " & Chr(34) & OutputThis & Chr(34) & "."
+                    
+                    End If
+                
+                End If ' NotInOutputThisYet
             
             End If
         
@@ -823,7 +1062,25 @@ Function WhichCols(MyRange As Range) As String
     
     Next i
     
+    If Debugs Then
+    
+        Debug.Print "Final contents of variable OutputThis: " & Chr(34) & OutputThis & Chr(34) & "."
+    
+    End If
+    
     WhichCols = OutputThis
+
+    If Debugs Then
+    
+        Debug.Print "OutputThis was assigned to WhichCols."
+    
+    End If
+
+    If Debugs Then
+    
+        Debug.Print "***** Function WhichCols ENDS ***"
+    
+    End If
 
 End Function ' WhichCols
 
@@ -1024,3 +1281,4 @@ Private Sub ObscureSettingToggle()
     MsgBox "Application.AutoCorrect.AutoFillFormulasInLists: " & CStr(Application.AutoCorrect.AutoFillFormulasInLists) & "."
 
 End Sub
+
