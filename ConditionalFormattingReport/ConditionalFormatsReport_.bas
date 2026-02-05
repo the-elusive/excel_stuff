@@ -991,8 +991,22 @@ Sub ConditionalFormatsReport()
         
         Next Item
     
-    End If
+    End If ' RGBs <> ""
+
+    theFormula = "='Type ' & UNICHAR(8594) & "
+    theFormula = theFormula & "' Column ' & UNICHAR(8594) & "
+    theFormula = theFormula & "' Interior ' & UNICHAR(8594) & "
+    theFormula = theFormula & "' Font ' & UNICHAR(8594) & "
+    theFormula = theFormula & "' Formula'"
+    theFormula = Replace(theFormula, Chr(39), Chr(34))
     
+    With Cells(Selection.Row + 1, 1)
+    
+        .Formula = theFormula
+        .Font.Bold = True
+    
+    End With
+
     Debug.Print "- Pivot table conditional formats END -"
     
     Range(Rows(3), Rows(Selection.Row - 1)).Group
@@ -1565,5 +1579,6 @@ Private Sub ObscureSettingToggle()
     MsgBox "Application.AutoCorrect.AutoFillFormulasInLists: " & CStr(Application.AutoCorrect.AutoFillFormulasInLists) & "."
 
 End Sub
+
 
 
