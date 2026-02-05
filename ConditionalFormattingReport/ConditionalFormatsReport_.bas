@@ -83,8 +83,9 @@ Sub ConditionalFormatsReport()
     
     Application.Calculation = xlCalculationManual
     
-    Dim r, c, ProcessedCFs As Long
-    Dim ColumnHeaders, WriteToCell, ThisWB As String
+    Dim r, c, ProcessedCFs, rVal, gVal, bVal As Long ' Thu 05 Feb 2026: Not sure that "ProcessedCFs" is used anywhere
+    Dim ColumnHeaders, WriteToCell, ThisWB, RGBs As String
+    Dim ItemNotFound As Boolean
     
     ColumnHeaders = ColumnHeaders & "Sheet"
     ColumnHeaders = ColumnHeaders & ", Applies to"
@@ -96,9 +97,11 @@ Sub ConditionalFormatsReport()
     ColumnHeaders = ColumnHeaders & ", Operator (desc)" ' Formula
     ColumnHeaders = ColumnHeaders & ", Formula1"
     ColumnHeaders = ColumnHeaders & ", Formula2"
+    ColumnHeaders = ColumnHeaders & ", Formula1 numbers replaced"
     ColumnHeaders = ColumnHeaders & ", One"
     ColumnHeaders = ColumnHeaders & ", Stripe"
     ColumnHeaders = ColumnHeaders & ", Interior colour"
+    ColumnHeaders = ColumnHeaders & ", Font colour"
     
     If ThisWorkbook.Name <> ActiveWorkbook.Name Then
     
@@ -145,15 +148,28 @@ Sub ConditionalFormatsReport()
     Debug.Print "Wrote headers to row one."
     
     ' Convert to list object
-    ActiveSheet.ListObjects.Add( _
+    ' ActiveSheet.ListObjects.Add( _
         SourceType:=xlSrcRange, _
         Source:=Cells(1, 1).CurrentRegion, _
-        xlListObjectHasHeaders:=xlYes _
+        XlListObjectHasHeaders:=xlYes _
     ).Name = "ListOfConditionalFormats"
     
-    Debug.Print "Converted to list object."
+    With ActiveSheet.ListObjects.Add( _
+        SourceType:=xlSrcRange, _
+        Source:=Cells(1, 1).CurrentRegion, _
+        XlListObjectHasHeaders:=xlYes)
+        
+        .Name = "ListOfConditionalFormats"
+        .TableStyle = "TableStyleLight14" ' Very minimal table style
+        .Range.Interior.ColorIndex = -4142 ' No fill
+        
+    End With
     
-    ActiveSheet.ListObjects("ListOfConditionalFormats").TableStyle = "TableStyleLight14" ' Very minimal table style
+    Application.CommandBars.ExecuteMso "Filter" ' Lovely stuff: https://www.microsoft.com/en-us/download/details.aspx?id=50745
+    
+    Debug.Print "Converted to list object, styled, filters off."
+    
+    ' ActiveSheet.ListObjects("ListOfConditionalFormats").TableStyle = "TableStyleLight14" ' Very minimal table style
     
     Cells.ColumnWidth = 10
     
@@ -184,8 +200,10 @@ Sub ConditionalFormatsReport()
         
             If ws.Type = 4 Then ' Chart
             
-                For c = LBound(Split(ColumnHeaders, ", ")) To UBound(Split(ColumnHeaders, ", "))
+                ' Whack the sheet name in the "Sheet" column & "-" in all other columns
                 
+                For c = LBound(Split(ColumnHeaders, ", ")) To UBound(Split(ColumnHeaders, ", "))
+                    
                     If Split(ColumnHeaders, ", ")(c) = "Sheet" Then
                     
                         Cells(r, c + 1) = ws.Name
@@ -204,6 +222,8 @@ Sub ConditionalFormatsReport()
             
                 If ws.Cells.FormatConditions.Count = 0 Then
                 
+                    ' Whack the sheet name in the "Sheet" column & "-" in all other columns
+                    
                     For c = LBound(Split(ColumnHeaders, ", ")) To UBound(Split(ColumnHeaders, ", "))
                     
                         If Split(ColumnHeaders, ", ")(c) = "Sheet" Then
@@ -226,7 +246,7 @@ Sub ConditionalFormatsReport()
                     
                         ' Debug.Print "Sheet name: " & Chr(34) & ws.Name & Chr(34) & ". Format condition number: " & CStr(i) & "."
                         
-                        Set CondForm = ws.Cells.FormatConditions.Item(i)
+                        Set condForm = ws.Cells.FormatConditions.Item(i)
                         
                         For c = LBound(Split(ColumnHeaders, ", ")) To UBound(Split(ColumnHeaders, ", "))
                         
@@ -238,7 +258,7 @@ Sub ConditionalFormatsReport()
                            
                                 Case "Applies to"
                                 
-                                    Cells(r, c + 1) = Replace(CondForm.AppliesTo.Address, "$", "")
+                                    Cells(r, c + 1) = Replace(condForm.AppliesTo.Address, "$", "")
                                 
                                 Case "Applies to (length)"
                                 
@@ -250,7 +270,7 @@ Sub ConditionalFormatsReport()
                                 
                                 Case "Type (value)"
                                 
-                                    Cells(r, c + 1) = CondForm.Type
+                                    Cells(r, c + 1) = condForm.Type
                                 
                                 Case "Type (desc)"
                                 
@@ -260,7 +280,7 @@ Sub ConditionalFormatsReport()
                                 
                                 Case "Operator (value)"
                                 
-                                    WriteToCell = CondForm.Operator
+                                    WriteToCell = condForm.Operator
                                     
                                     If Err.Number > 0 Then
                                     
@@ -280,7 +300,7 @@ Sub ConditionalFormatsReport()
                                 
                                 Case "Formula1"
                                 
-                                    WriteToCell = Chr(39) & CondForm.Formula1 ' Notice the apostrophe
+                                    WriteToCell = Chr(39) & condForm.Formula1 ' Notice the apostrophe
                                     
                                     If Err.Number > 0 Then
                                     
@@ -294,7 +314,7 @@ Sub ConditionalFormatsReport()
                                     
                                 Case "Formula2"
                                     
-                                    WriteToCell = Chr(39) & CondForm.Formula2 ' Notice the apostrophe
+                                    WriteToCell = Chr(39) & condForm.Formula2 ' Notice the apostrophe
                                     
                                     If Err.Number > 0 Then
                                     
@@ -306,18 +326,22 @@ Sub ConditionalFormatsReport()
                                     
                                     Cells(r, c + 1) = WriteToCell
                                     
+                                Case "Formula1 numbers replaced"
+                                
+                                    ' =IF([@[Type (desc)]]="xlExpression",REGEXREPLACE([@Formula1],"\d+(\.\d+)?",UNICHAR(119899)),"-")
+                                
                                 Case "Interior colour"
                                 
-                                    If CondForm.Interior.ColorIndex = -4142 Then
+                                    If condForm.Interior.ColorIndex = -4142 Then
                                     
                                         WriteToCell = "No fill"
                                     
                                     Else
                                     
                                         WriteToCell = "RGB(" & _
-                                        GetRed(CondForm.Interior.Color) & ", " & _
-                                        GetGreen(CondForm.Interior.Color) & ", " & _
-                                        GetBlue(CondForm.Interior.Color) & _
+                                        GetRed(condForm.Interior.Color) & ", " & _
+                                        GetGreen(condForm.Interior.Color) & ", " & _
+                                        GetBlue(condForm.Interior.Color) & _
                                         ")"
                                     
                                     End If
@@ -330,13 +354,32 @@ Sub ConditionalFormatsReport()
                                     End If
                                     
                                     Cells(r, c + 1) = WriteToCell
+                                
+                                Case "Font colour"
+                                
+                                    If condForm.Font.ColorIndex = -4105 Then
                                     
-                                    If WriteToCell <> "n/a" And WriteToCell <> "No fill" Then
+                                        WriteToCell = "Automatic"
                                     
-                                        Cells(r, c + 1).Interior.Color = CondForm.Interior.Color
-                                        
+                                    Else
+                                    
+                                        WriteToCell = "RGB(" & _
+                                        GetRed(condForm.Font.Color) & ", " & _
+                                        GetGreen(condForm.Font.Color) & ", " & _
+                                        GetBlue(condForm.Font.Color) & _
+                                        ")"
+                                    
                                     End If
                                     
+                                    If Err.Number > 0 Then
+                                        
+                                        Err.Clear
+                                        WriteToCell = "n/a"
+                                    
+                                    End If
+                                    
+                                    Cells(r, c + 1) = WriteToCell
+                                
                                 Case Else
                                 
                                     ' Do nothing
@@ -345,7 +388,7 @@ Sub ConditionalFormatsReport()
                         
                         Next c
                         
-                        Set CondForm = Nothing
+                        Set condForm = Nothing
                         
                         r = r + 1
                     
@@ -432,6 +475,17 @@ Sub ConditionalFormatsReport()
     Range("ListOfConditionalFormats[Operator (desc)]") = theFormula
     Debug.Print "Populated column: " & Chr(34) & "Operator (desc)" & Chr(34) & "."
     
+    ' Formula1 numbers replaced
+    theFormula = "=IF("
+    theFormula = theFormula & "[@[Type (desc)]]=" & Chr(34) & "xlExpression" & Chr(34) & ", "
+    theFormula = theFormula & "REGEXREPLACE([@Formula1]," & Chr(34) & "\d+(\.\d+)?" & Chr(34) & ",UNICHAR(119899)), "
+    theFormula = theFormula & Chr(34) & "-" & Chr(34)
+    theFormula = theFormula & ")"
+    
+    Range("ListOfConditionalFormats[Formula1 numbers replaced]") = theFormula
+    Debug.Print "Populated column: " & Chr(34) & "Formula1 numbers replaced" & Chr(34) & "."
+    
+    
     ' Destroy formulas
     ActiveSheet.ListObjects(1).DataBodyRange.Select
     Selection.Copy
@@ -490,18 +544,149 @@ Sub ConditionalFormatsReport()
     Debug.Print "Any conditional format where the length of " & Chr(34) & "Applies to" & Chr(34) & " > 25 is now coloured yellow."
     ' Applies to will be something like A1:E1000. What we're looking for is something like this: A1:E5, A7:E8, A10:E15, etc
     
-    Range("ListOfConditionalFormats[Interior colour]").Select
+    Range("ListOfConditionalFormats[Interior colour]").Select ' Important that this isn't moved 'cos subsequent steps depend on this being here
     
-    Selection.FormatConditions.Add Type:=xlExpression, _
+    ' Selection.FormatConditions.Add Type:=xlExpression, _
     Formula1:="=OR(" & _
     Replace(Selection.Cells(1).Address, "$", "") & "=" & Chr(34) & "-" & Chr(34) & ", " & _
     Replace(Selection.Cells(1).Address, "$", "") & "=" & Chr(34) & "n/a" & Chr(34) & ", " & _
     Replace(Selection.Cells(1).Address, "$", "") & "=" & Chr(34) & "no fill" & Chr(34) & _
     ")"
-    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
-    Selection.FormatConditions(1).Interior.ColorIndex = -4142
-    Selection.FormatConditions(1).StopIfTrue = False
-    Debug.Print "No fills & hyphens' ColorIndex set to -4142 (no fill)."
+    ' Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    ' Selection.FormatConditions(1).Interior.ColorIndex = -4142
+    ' Selection.FormatConditions(1).StopIfTrue = False
+    Debug.Print "ColorIndex no longer set to -4142 (no fill) for: No fills, n/as & hyphens."
+    
+    Debug.Print "- Subsection dealing with RGBs in " & Chr(34) & "Interior colour" & Chr(34) & " column STARTS -"
+    
+    RGBs = "" ' May as well
+    
+    For Each theCell In Selection.Cells
+    
+        If Left(theCell, 3) = "RGB" Then
+        
+            If RGBs = "" Then
+            
+                RGBs = theCell.Value ' You don't especially need to use value tbh
+            
+            Else ' RGBs <> ""
+            
+                ItemNotFound = True
+                
+                For Each Item In Split(RGBs, "|")
+                
+                    If Item = theCell.Value Then
+                    
+                        ItemNotFound = False: Exit For
+                    
+                    End If
+                
+                Next Item
+                
+                If ItemNotFound Then
+                
+                    RGBs = RGBs & "|" & theCell.Value
+                
+                End If
+            
+            End If ' RGBs <> ""
+        
+        End If
+    
+    Next theCell
+    
+    ' Array contents will be something like: "RGB(255, 0, 0)|RGB(0, 255, 0)|RGB(0, 0, 255)".
+    
+    Debug.Print "Built array of RGBs in the " & Chr(34) & "Interior colour" & Chr(34) & " column."
+    
+    If RGBs <> "" Then
+    
+        For Each Item In Split(RGBs, "|")
+        
+            rVal = Split(Replace(Replace(Item, "RGB(", ""), ")", ""), ", ")(0)
+            gVal = Split(Replace(Replace(Item, "RGB(", ""), ")", ""), ", ")(1)
+            bVal = Split(Replace(Replace(Item, "RGB(", ""), ")", ""), ", ")(2)
+        
+            Selection.FormatConditions.Add Type:=xlCellValue, Operator:=xlEqual, Formula1:=Item
+            Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+            Selection.FormatConditions(1).Interior.Color = RGB(rVal, gVal, bVal)
+            Selection.FormatConditions(1).StopIfTrue = False
+        
+        Next Item
+    
+    End If
+    
+    Debug.Print "- Subsection dealing with RGBs in " & Chr(34) & "Interior colour" & Chr(34) & " column ENDS -"
+    
+    Debug.Print "- Subsection dealing with RGBs in " & Chr(34) & "Font colour" & Chr(34) & " column STARTS -"
+    
+    Range("ListOfConditionalFormats[Font colour]").Select
+    
+    RGBs = "" ' Definitely needs reinitialising here
+    
+    For Each theCell In Selection.Cells
+    
+        If Left(theCell, 3) = "RGB" Then
+        
+            If RGBs = "" Then
+            
+                RGBs = theCell.Value ' You don't especially need to use value tbh
+            
+            Else ' RGBs <> ""
+            
+                ItemNotFound = True
+                
+                For Each Item In Split(RGBs, "|")
+                
+                    If Item = theCell.Value Then
+                    
+                        ItemNotFound = False: Exit For
+                    
+                    End If
+                
+                Next Item
+                
+                If ItemNotFound Then
+                
+                    RGBs = RGBs & "|" & theCell.Value
+                
+                End If
+            
+            End If ' RGBs <> ""
+        
+        End If
+    
+    Next theCell
+    
+    ' Array contents will be something like: "RGB(255, 0, 0)|RGB(0, 255, 0)|RGB(0, 0, 255)".
+    
+    Debug.Print "Built array of RGBs in the " & Chr(34) & "Font colour" & Chr(34) & " column."
+    
+    If RGBs <> "" Then
+    
+        For Each Item In Split(RGBs, "|")
+        
+            rVal = Split(Replace(Replace(Item, "RGB(", ""), ")", ""), ", ")(0)
+            gVal = Split(Replace(Replace(Item, "RGB(", ""), ")", ""), ", ")(1)
+            bVal = Split(Replace(Replace(Item, "RGB(", ""), ")", ""), ", ")(2)
+        
+            Selection.FormatConditions.Add Type:=xlCellValue, Operator:=xlEqual, Formula1:=Item
+            Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+            Selection.FormatConditions(1).Interior.Color = RGB(rVal, gVal, bVal)
+            
+            If Item = "RGB(156, 0, 6)" Then
+
+                Selection.FormatConditions(1).Font.Color = RGB(255, 255, 255)
+            
+            End If
+            
+            Selection.FormatConditions(1).StopIfTrue = False
+        
+        Next Item
+    
+    End If
+    
+    Debug.Print "- Subsection dealing with RGBs in " & Chr(34) & "Font colour" & Chr(34) & " column ENDS -"
     
     Debug.Print "--- Conditional formats END ---"
     
@@ -513,6 +698,7 @@ Sub ConditionalFormatsReport()
     AutofitThese = AutofitThese & "operator (desc), "
     AutofitThese = AutofitThese & "type (desc), "
     AutofitThese = AutofitThese & "interior colour, "
+    AutofitThese = AutofitThese & "font colour, "
     AutofitThese = AutofitThese & "one, "
     AutofitThese = AutofitThese & "stripe"
     
@@ -523,12 +709,12 @@ Sub ConditionalFormatsReport()
     
     Next Item
     
-    ' Make "Formula1" column wider
+    ' Make "Formula1" column 5 times wider
     
     Columns(WorksheetFunction.Match("formula1", Rows(1), 0)).ColumnWidth = _
     5 * Columns(WorksheetFunction.Match("formula1", Rows(1), 0)).ColumnWidth
     
-    Debug.Print "Made " & Chr(34) & "Formula1" & Chr(34) & " column 5x wider than it was."
+    Debug.Print "Made " & Chr(34) & "Formula1" & Chr(34) & " column 5x wider than it was before."
     
     ' Deletions
     
@@ -716,6 +902,105 @@ Sub ConditionalFormatsReport()
     End If ' ActiveWorkbook.Name = ThisWorkbook.Name
     
     Debug.Print "--- Add buttons ENDS ---"
+    
+    Debug.Print "--- Add pivot table STARTS ---"
+    
+    ' No check for a pre-existing pivot cache as yet (Thu 05 Feb 2026)
+    ActiveWorkbook.PivotCaches.Create(SourceType:=xlDatabase, _
+    SourceData:="ListOfConditionalFormats").CreatePivotTable _
+    TableDestination:=Cells(Cells(1, 1).CurrentRegion.Rows.Count + 4, 1)
+    
+    ' Rows
+    ActiveSheet.PivotTables(1).PivotFields("Type (desc)").Orientation = xlRowField
+    ActiveSheet.PivotTables(1).PivotFields("Applies to (columns)").Orientation = xlRowField
+    ActiveSheet.PivotTables(1).PivotFields("Interior colour").Orientation = xlRowField
+    ActiveSheet.PivotTables(1).PivotFields("Font colour").Orientation = xlRowField
+    ActiveSheet.PivotTables(1).PivotFields("Formula1 numbers replaced").Orientation = xlRowField
+    
+    ' Everything else
+    ActiveSheet.PivotTables(1).PivotFields("Sheet").Orientation = xlPageField ' Filter
+    ActiveSheet.PivotTables(1).AddDataField ActiveSheet.PivotTables(1).PivotFields("One"), "Instances", xlSum
+    
+    ' Select the pivot table including the filter
+    ActiveSheet.PivotTables(1).TableRange2.Select
+
+    ' Pivot table needs to be selected for the following to work
+    Application.CommandBars.ExecuteMso "PivotTableSubtotalsDoNotShow"
+    
+    Debug.Print "- Pivot table conditional formats START -"
+    
+    RGBs = ""
+    
+    For Each theCell In Selection.Cells
+    
+        If Left(theCell, 3) = "RGB" Then
+        
+            If RGBs = "" Then
+            
+                RGBs = theCell.Value ' You don't especially need to use value tbh
+            
+            Else ' RGBs <> ""
+            
+                ItemNotFound = True
+                
+                For Each Item In Split(RGBs, "|")
+                
+                    If Item = theCell.Value Then
+                    
+                        ItemNotFound = False: Exit For
+                    
+                    End If
+                
+                Next Item
+                
+                If ItemNotFound Then
+                
+                    RGBs = RGBs & "|" & theCell.Value
+                
+                End If
+            
+            End If ' RGBs <> ""
+        
+        End If
+    
+    Next theCell
+    
+    ' Array contents will be something like: "RGB(255, 0, 0)|RGB(0, 255, 0)|RGB(0, 0, 255)".
+    
+    Debug.Print "Built array of RGBs in the pivot table."
+    
+    If RGBs <> "" Then
+    
+        For Each Item In Split(RGBs, "|")
+        
+            rVal = Split(Replace(Replace(Item, "RGB(", ""), ")", ""), ", ")(0)
+            gVal = Split(Replace(Replace(Item, "RGB(", ""), ")", ""), ", ")(1)
+            bVal = Split(Replace(Replace(Item, "RGB(", ""), ")", ""), ", ")(2)
+        
+            Selection.FormatConditions.Add Type:=xlCellValue, Operator:=xlEqual, Formula1:=Item
+            Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+            Selection.FormatConditions(1).Interior.Color = RGB(rVal, gVal, bVal)
+            
+            If Item = "RGB(156, 0, 6)" Then
+
+                Selection.FormatConditions(1).Font.Color = RGB(255, 255, 255)
+            
+            End If
+            
+            Selection.FormatConditions(1).StopIfTrue = False
+        
+        Next Item
+    
+    End If
+    
+    Debug.Print "- Pivot table conditional formats END -"
+    
+    Range(Rows(3), Rows(Selection.Row - 1)).Group
+    
+    ' Collapse group
+    ActiveSheet.Outline.ShowLevels RowLevels:=1, ColumnLevels:=1
+    
+    Debug.Print "--- Add pivot table ENDS ---"
 
 TheEnd:
     
@@ -760,7 +1045,6 @@ TheEnd:
     MsgBox msg
 
 End Sub ' ConditionalFormatsReport
-
 Function WhichCols(MyRange As Range) As String
     
     Dim Debugs, NotInOutputThisYet As Boolean ' These default to False ie Zero
@@ -1281,4 +1565,5 @@ Private Sub ObscureSettingToggle()
     MsgBox "Application.AutoCorrect.AutoFillFormulasInLists: " & CStr(Application.AutoCorrect.AutoFillFormulasInLists) & "."
 
 End Sub
+
 
