@@ -40,6 +40,6 @@ kickoff_time looks like this:
       )
     )
   )
-
 )
+
 
