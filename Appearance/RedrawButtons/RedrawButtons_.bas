@@ -3,9 +3,14 @@ Private Sub RedrawButtons()
 
     ' Ordinary rather than ActiveX buttons
     
+    dim msg As String
+    dim ButtonRng As String
+    dim ButtonTxt As String
+    dim ButtonAct As String
+
+    Dim myArray
     ' Edit myArray as required
-    Dim myArray, msg, ButtonRng, ButtonTxt, ButtonAct As String
-    'eg myArray = myArray & "I16:I17|Open folder|DoOpenContainingFolder"
+    ' eg myArray = myArray & "I16:I17|Open folder|DoOpenContainingFolder"
     myArray = myArray & "G1:I1|Refresh|QrysConns_RefreshFirstListObj" & vbCr
     myArray = myArray & "J1:K1|Calibri 11|FirstListObjCalibriEleven" & vbCr
     myArray = myArray & "L1|Icons|FormIconsColourEach"
@@ -83,6 +88,7 @@ Private Sub RedrawButtons()
     End If ' msg = ""
     
 End Sub ' RedrawButtons
+
 
 
 
