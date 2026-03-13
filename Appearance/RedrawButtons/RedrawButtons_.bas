@@ -15,7 +15,8 @@ Private Sub RedrawButtons()
     myArray = myArray & "J1:K1|Calibri 11|FirstListObjCalibriEleven" & vbCr
     myArray = myArray & "L1|Icons|FormIconsColourEach"
     
-    Dim ButtonCount, answer As Integer
+    Dim answer As Integer
+    Dim ButtonCount As Integer
     ButtonCount = UBound(Split(myArray, vbCr)) - LBound(Split(myArray, vbCr)) + 1
     
     msg = msg & "About to add " & CStr(ButtonCount) & " buttons to the tab:" & vbCr & Chr(34) & ActiveSheet.Name & Chr(34) & "."
@@ -88,6 +89,7 @@ Private Sub RedrawButtons()
     End If ' msg = ""
     
 End Sub ' RedrawButtons
+
 
 
 
