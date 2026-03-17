@@ -1,6 +1,4 @@
 Attribute VB_Name = "LaunchEditors"
-' Attribute VB_Name = "LaunchEditors"
-
 Sub AwesomeLink()
 
     ThisWorkbook.FollowHyperlink "https://www.microsoft.com/en-us/download/details.aspx?id=50745"
