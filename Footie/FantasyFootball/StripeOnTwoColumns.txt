@@ -6,6 +6,45 @@
   rgb(242, 206, 239) → Light purple (formulas)
   rgb(72, 61, 139) → Navy blue (background)
 
+--- LET function version cf original version which follows this version ---
+=LET(
+
+  Instructions, "Change 'ChangeColourHeader', 'ChangeColour' & 'ChangeShade' as required.",
+  ChangeColourHeader, "Competition",
+  ChangeColour, [@competition],
+  ChangeShade, [@ko],
+
+  IF(
+    OFFSET(ChangeColour,-1,0) = ChangeColourHeader,
+    "LB",
+    IF(
+      OFFSET(ChangeColour,-1,0) = ChangeColour,
+      IF(
+        OFFSET(ChangeShade,-1,0) = ChangeShade,
+        OFFSET([@stripe], -1, 0),
+        IF(
+          NOT(ISERROR(SEARCH("L", OFFSET([@stripe], -1, 0)))),
+          SUBSTITUTE(OFFSET([@stripe], -1, 0), "L", "D"),
+          SUBSTITUTE(OFFSET([@stripe], -1, 0), "D", "L")
+        )
+      ),
+      IF(
+        NOT(ISERROR(SEARCH("Y", OFFSET([@stripe], -1, 0)))),
+        IF(
+          NOT(ISERROR(SEARCH("D", OFFSET([@stripe], -1, 0)))),
+          SUBSTITUTE(SUBSTITUTE(OFFSET([@stripe], -1, 0), "Y", "B"), "D", "L"),
+          SUBSTITUTE(SUBSTITUTE(OFFSET([@stripe], -1, 0), "Y", "B"), "L", "D")
+        ),
+        IF(
+          NOT(ISERROR(SEARCH("D", OFFSET([@stripe], -1, 0)))),
+          SUBSTITUTE(SUBSTITUTE(OFFSET([@stripe], -1, 0), "B", "Y"), "D", "L"),
+          SUBSTITUTE(SUBSTITUTE(OFFSET([@stripe], -1, 0), "B", "Y"), "L", "D")
+        )
+      )
+    )
+  )
+)
+--- Original version ---
 =IF(
   OFFSET([@Brand],-1,0) = "brand",
   "LB",
@@ -34,5 +73,4 @@
       )
     )
   )
-
 )
