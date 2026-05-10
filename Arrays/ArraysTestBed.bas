@@ -86,17 +86,14 @@ TheEnd:
     If Err.Number > 0 Then
     
         msg = _
-        "--- Err ---" & vbCr & _
-        ".Number : " & CStr(Err.Number) & vbCr & _
-        ".Description : " & Err.Description
+            "--- Err ---" & vbCr & _
+            ".Number : " & CStr(Err.Number) & vbCr & _
+            ".Description : " & Err.Description
         
         Err.Clear
     
     Else
-    
-'     msg = msg & "  GrabWhatString = " & Chr(34) & GrabWhatString & Chr(34) & "." & vbCr
-        
-        
+
         msg = _
             "  Done!" & vbCr & _
             "  answer (6 = All at once, 7 = one by one): " & CStr(answer) & "." & vbCr & _
