@@ -1,4 +1,6 @@
-Handy spreadsheet I knocked up that lists your environment variables. Not something I use every day but it's nice to know I can always download a copy from GitHub if I need it. Tested & working in both Windows & MacOS.
+Handy spreadsheet I knocked up that lists your environment variables.\
+Not something I use every day but it's nice to know I can always download a copy from GitHub if I need it.\
+Tested & working in both Windows & MacOS.
 
 For my reference:
 
