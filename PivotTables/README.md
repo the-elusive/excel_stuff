@@ -14,3 +14,7 @@ Tues 03 Feb 2026: I uploaded the file PivotTablesVBA_01.bas which contains the p
 Also:
 
 &nbsp;&nbsp;**PTs_SelectPTIncFilters** & **PTs_SelectPTExcFilters** which do exactly what you would expect.
+
+For my reference:
+
+[Get started/Writing on GitHub/Start writing on GitHub/Basic formatting syntax](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
