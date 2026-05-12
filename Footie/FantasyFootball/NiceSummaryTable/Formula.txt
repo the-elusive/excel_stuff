@@ -1,0 +1,19 @@
+=LET(
+
+  GroupByFields, PointsPerGameweekEachManager[[#All],[entry]:[player_name]],
+  TotalPoints, PointsPerGameweekEachManager[[#All],[total_points]],
+  EventTransfers, PointsPerGameweekEachManager[[#All],[event_transfers]],
+  AggregateThese, HSTACK(TotalPoints, EventTransfers),
+  AggregateHow, HSTACK(MAX, SUM),
+  SortByColTxt, "total_points",
+  SortByColNum, MATCH(SortByColTxt, CHOOSEROWS(AggregateThese, 1), 0),
+
+  GROUPBY(
+    GroupByFields,
+    AggregateThese,
+    AggregateHow,
+    3,
+    0,
+    -SUM(SortByColNum, COLUMNS(GroupByFields))
+  )
+)
