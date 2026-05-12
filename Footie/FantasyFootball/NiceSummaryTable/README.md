@@ -4,7 +4,7 @@ Formula to summarise (for example) the total number of transfers each manager ha
 
 <img src="images/DataLooksLikeThis.png" alt="Summary table is based on data that looks something like this" width="80%">
 
-<img src="images/ThisImageDoesNotExist.png" alt="This is what a non-existent image looks like" width="80%">
+<!-- <img src="images/ThisImageDoesNotExist.png" alt="This is what a non-existent image looks like" width="80%"> -->
 
 For my reference:
 
