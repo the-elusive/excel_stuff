@@ -1,7 +1,11 @@
 Formula to summarise (for example) the total number of transfers each manager has made throughout the season.
 
-![Summary table looks like this](images/FormulaandOutputLooksLikeThis.png)
+<img src="images/FormulaandOutputLooksLikeThis.png" alt="Summary table looks like this" width="80%">
 
-![Summary table is based on data that looks something like this](images/DataLooksLikeThis.png)
+<img src="images/DataLooksLikeThis.png" alt="Summary table is based on data that looks something like this" width="80%">
 
-![This is what a non-existent image looks like](images/ThisImageDoesNotExist.png)
+<img src="images/ThisImageDoesNotExist.png" alt="This is what a non-existent image looks like" width="80%">
+
+For my reference:
+
+[Get started/Writing on GitHub/Start writing on GitHub/Basic formatting syntax](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
