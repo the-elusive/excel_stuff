@@ -1,4 +1,4 @@
-Formula to summarise (for example) the total number of transfers each manager has made throughout the season.
+<a href="Formula.txt">Formula</a> to summarise (for example) the total number of transfers each manager has made throughout the season.
 
 <img src="images/FormulaandOutputLooksLikeThis.png" alt="Summary table looks like this" width="80%">
 
