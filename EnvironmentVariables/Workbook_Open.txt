@@ -1,12 +1,83 @@
-' Workbook_Open
-' Workbook_BeforeSave
-
 Private Sub Workbook_Open()
- 
-    Range("Refreshed") = Format(Now, "ddd dd-mmm-yyyy hh:mm:ss")
-    Range("Version") = Application.Version
-    Range("Build") = Application.Build
-    Range("OS") = Application.OperatingSystem ' Environ("OS") not a thing on Mac
+    
+    Debug.Print "--- Workbook_Open STARTS ---"
+    
+    Dim a As Byte
+    Dim ArrayOS As String
+    Dim RegistryFolder As String
+    
+    Range("LastOpened") = Format(Now, "ddd dd-mmm-yyyy hh:mm:ss")
+    Range("ExcelVersion") = Application.Version
+    Range("ExcelBuild") = Application.Build
+    
+' --- OS section STARTS ---
+
+Range("OS") = Application.OperatingSystem
+
+If Left(Application.OperatingSystem, 3) = "Win" Then
+
+    Debug.Print "Windows detected. Writing additional OS info to the appropriate named ranges."
+    
+    RegistryFolder = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\"
+    Debug.Print Replace("RegistryFolder: '" & RegistryFolder & "'.", Chr(39), Chr(34))
+    
+    ArrayOS = ArrayOS & "MajorOS|CurrentMajorVersionNumber" & vbCr
+    ArrayOS = ArrayOS & "MinorOS|CurrentMinorVersionNumber" & vbCr
+    ArrayOS = ArrayOS & "BuildOS|CurrentBuild" & vbCr
+    ArrayOS = ArrayOS & "UBROS|UBR"
+    
+    For a = LBound(Split(ArrayOS, vbCr)) To UBound(Split(ArrayOS, vbCr))
+        
+        LeftOfPipe = Split(Split(ArrayOS, vbCr)(a), "|")(0)
+        Debug.Print Replace("LeftOfPipe: '" & LeftOfPipe & "'.", Chr(39), Chr(34))
+        
+        RightOfPipe = Split(Split(ArrayOS, vbCr)(a), "|")(1)
+        Debug.Print Replace("RightOfPipe: '" & RightOfPipe & "'.", Chr(39), Chr(34))
+        
+        Range(LeftOfPipe) = CreateObject("WScript.Shell").RegRead(RegistryFolder & RightOfPipe)
+        
+    Next a
+
+    Range("NameMacOS") = "Mac only obvs"
+
+Else
+    Debug.Print "macOS detected. Writing macOS version info to the appropriate named ranges."
+
+    ' macOS equivalents using sw_vers
+    On Error Resume Next
+
+    Range("MajorOS") = MacScript("do shell script ""sw_vers -productVersion | cut -d. -f1""")
+    Range("MinorOS") = MacScript("do shell script ""sw_vers -productVersion | cut -d. -f2""")
+    Range("BuildOS") = MacScript("do shell script ""sw_vers -buildVersion""")
+    Range("UBROS") = "Windows only" ' MacOS has no UBR equivalent
+    Range("NameMacOS") = _
+    Replace("=IFERROR(INDEX(NamesMacOSs[NameMacOS],MATCH(MajorOS,NamesMacOSs[MajorOS],0)), 'Error :0(')", Chr(39), Chr(34))
+
+    If Err.Number = 0 Then
+    
+        Debug.Print "MacScripts worked :0) No need to try AppleScripts instead."
+    
+    Else ' MacScripts failed
+        
+        Debug.Print "MacScript failed; Excel sandboxed. Trying AppleScriptTask."
+
+        Err.Clear
+
+        Range("MajorOS") = AppleScriptTask("MacOSVersion.scpt", "GetMajor", "")
+        Range("MinorOS") = AppleScriptTask("MacOSVersion.scpt", "GetMinor", "")
+        Range("BuildOS") = AppleScriptTask("MacOSVersion.scpt", "GetBuild", "")
+        Range("UBROS") = "Windows only"
+        Range("NameMacOS") = _
+        Replace("=IFERROR(INDEX(NamesMacOSs[NameMacOS],MATCH(MajorOS,NamesMacOSs[MajorOS],0)), 'Error :0(')", Chr(39), Chr(34))
+        
+    End If
+
+    On Error GoTo 0
+
+End If
+
+    ' --- OS section ENDS ---
+    
     Range("Username") = Environ("USERNAME")
     Range("User") = Environ("USER")
     
@@ -64,11 +135,6 @@ Private Sub Workbook_Open()
     
     ' --- Buttons: Home tab ENDS ---
     
+    Debug.Print "--- Workbook_Open ENDS ---"
+
 End Sub ' Workbook_Open
-
-Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
-    
-    Range("ClearThis").ClearContents
-
-End Sub
-
