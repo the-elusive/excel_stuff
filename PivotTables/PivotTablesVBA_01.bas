@@ -2,8 +2,8 @@ Attribute VB_Name = "PivotTablesVBA_01"
 ' Sub PTs__CachesCountActiveWB()
 ' Sub PTs_CacheRecycle()
 ' Sub PTs_CountEachTab()
-' Sub PTs_SelectPTIncFilters()
 ' Sub PTs_SelectPTExcFilters()
+' Sub PTs_SelectPTIncFilters()
 
 Sub PTs__CachesCountActiveWB()
 
@@ -142,81 +142,7 @@ Sub PTs_CountEachTab()
 
 End Sub ' PTs_CountEachTab
 
-Sub PTs_SelectPTIncFilters()
-
-    ' Over-engineered for your comfort & convenience ;0)
-    
-    On Error GoTo TheEnd
-    
-    Dim p, WhichPT As Long
-    Dim PTs, ErrMsg, msg As String
-    PTs = "Enter the number of the pivot table (filters will be INCLUDED)." & vbCr
-    
-    If ActiveSheet.PivotTables.Count = 0 Then
-    
-        ErrMsg = "No pivot tables on tab: " & Chr(34) & ActiveSheet.Name & Chr(34) & "."
-    
-    Else
-    
-        If ActiveSheet.PivotTables.Count = 1 Then
-        
-            ActiveSheet.PivotTables(1).TableRange2.Select
-        
-        Else
-        
-            For p = 1 To ActiveSheet.PivotTables.Count
-            
-                PTs = PTs & vbCr & CStr(p) & ": " & ActiveSheet.PivotTables(p).Name
-            
-            Next p
-            
-            ' https://learn.microsoft.com/en-us/office/vba/language/reference/user-interface-help/inputbox-function
-            ' InputBox(prompt, [ title ], [ default ], [ xpos ], [ ypos ], [ helpfile, context ])
-            ' Only "prompt" is mandatory
-            
-           WhichPT = InputBox(PTs, "Choose PT dialog.", 1)
-           
-           ActiveSheet.PivotTables(WhichPT).TableRange2.Select
-        
-        End If
-    
-    End If
-
-TheEnd:
-    
-    If Err.Number > 0 Then
-    
-        msg = "--- Error ---" & vbCr & vbCr & "Number:" & CStr(Err.Number) & vbCr & "Desc: " & Err.Description
-        
-        Err.Clear
-    
-    Else
-    
-        If ErrMsg <> "" Then
-        
-            msg = ErrMsg
-        
-        Else
-        
-            ' msg = "Pivot"
-        
-        End If
-    
-    End If
-    
-    If msg <> "" Then
-    
-        Beep
-        
-        Debug.Print msg
-        
-        MsgBox msg
-    
-    End If
-
-End Sub ' PTs_SelectPTIncFilters
-
-Sub PTs_SelectPTExcFilters()
+Sub PTs_SelectPTExcFilters() ' TableRange1
 
     ' Over-engineered for your comfort & convenience ;0)
     
@@ -289,4 +215,78 @@ TheEnd:
     End If
 
 End Sub ' PTs_SelectPTExcFilters
+
+Sub PTs_SelectPTIncFilters() ' TableRange2
+
+    ' Over-engineered for your comfort & convenience ;0)
+    
+    On Error GoTo TheEnd
+    
+    Dim p, WhichPT As Long
+    Dim PTs, ErrMsg, msg As String
+    PTs = "Enter the number of the pivot table (filters will be INCLUDED)." & vbCr
+    
+    If ActiveSheet.PivotTables.Count = 0 Then
+    
+        ErrMsg = "No pivot tables on tab: " & Chr(34) & ActiveSheet.Name & Chr(34) & "."
+    
+    Else
+    
+        If ActiveSheet.PivotTables.Count = 1 Then
+        
+            ActiveSheet.PivotTables(1).TableRange2.Select
+        
+        Else
+        
+            For p = 1 To ActiveSheet.PivotTables.Count
+            
+                PTs = PTs & vbCr & CStr(p) & ": " & ActiveSheet.PivotTables(p).Name
+            
+            Next p
+            
+            ' https://learn.microsoft.com/en-us/office/vba/language/reference/user-interface-help/inputbox-function
+            ' InputBox(prompt, [ title ], [ default ], [ xpos ], [ ypos ], [ helpfile, context ])
+            ' Only "prompt" is mandatory
+            
+           WhichPT = InputBox(PTs, "Choose PT dialog.", 1)
+           
+           ActiveSheet.PivotTables(WhichPT).TableRange2.Select
+        
+        End If
+    
+    End If
+
+TheEnd:
+    
+    If Err.Number > 0 Then
+    
+        msg = "--- Error ---" & vbCr & vbCr & "Number:" & CStr(Err.Number) & vbCr & "Desc: " & Err.Description
+        
+        Err.Clear
+    
+    Else
+    
+        If ErrMsg <> "" Then
+        
+            msg = ErrMsg
+        
+        Else
+        
+            ' msg = "Pivot"
+        
+        End If
+    
+    End If
+    
+    If msg <> "" Then
+    
+        Beep
+        
+        Debug.Print msg
+        
+        MsgBox msg
+    
+    End If
+
+End Sub ' PTs_SelectPTIncFilters
 
