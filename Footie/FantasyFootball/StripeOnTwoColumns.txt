@@ -8,11 +8,11 @@
 
 --- LET function version cf original version which follows this version ---
 =LET(
-
   Instructions, "Change 'ChangeColourHeader', 'ChangeColour' & 'ChangeShade' as required.",
   ChangeColourHeader, "Competition",
   ChangeColour, [@competition],
   ChangeShade, [@ko],
+  s, LAMBDA(text, old_text, new_text, SUBSTITUTE(text, old_text, new_text)),
 
   IF(
     OFFSET(ChangeColour,-1,0) = ChangeColourHeader,
@@ -24,21 +24,21 @@
         OFFSET([@stripe], -1, 0),
         IF(
           NOT(ISERROR(SEARCH("L", OFFSET([@stripe], -1, 0)))),
-          SUBSTITUTE(OFFSET([@stripe], -1, 0), "L", "D"),
-          SUBSTITUTE(OFFSET([@stripe], -1, 0), "D", "L")
+          s(OFFSET([@stripe], -1, 0), "L", "D"),
+          s(OFFSET([@stripe], -1, 0), "D", "L")
         )
       ),
       IF(
         NOT(ISERROR(SEARCH("Y", OFFSET([@stripe], -1, 0)))),
         IF(
           NOT(ISERROR(SEARCH("D", OFFSET([@stripe], -1, 0)))),
-          SUBSTITUTE(SUBSTITUTE(OFFSET([@stripe], -1, 0), "Y", "B"), "D", "L"),
-          SUBSTITUTE(SUBSTITUTE(OFFSET([@stripe], -1, 0), "Y", "B"), "L", "D")
+          s(s(OFFSET([@stripe], -1, 0), "Y", "B"), "D", "L"),
+          s(s(OFFSET([@stripe], -1, 0), "Y", "B"), "L", "D")
         ),
         IF(
           NOT(ISERROR(SEARCH("D", OFFSET([@stripe], -1, 0)))),
-          SUBSTITUTE(SUBSTITUTE(OFFSET([@stripe], -1, 0), "B", "Y"), "D", "L"),
-          SUBSTITUTE(SUBSTITUTE(OFFSET([@stripe], -1, 0), "B", "Y"), "L", "D")
+          s(s(OFFSET([@stripe], -1, 0), "B", "Y"), "D", "L"),
+          s(s(OFFSET([@stripe], -1, 0), "B", "Y"), "L", "D")
         )
       )
     )
